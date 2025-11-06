@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Fireworks from '../components/Fireworks'
+import ConfettiEffect from '../components/ConfettiEffect'
 
 export default function PaymentCallback() {
   const [status, setStatus] = useState<'checking' | 'success' | 'failed'>('checking')
   const [showFireworks, setShowFireworks] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
   const router = useRouter()
   const { OrderTrackingId } = router.query
 
@@ -24,7 +26,8 @@ export default function PaymentCallback() {
         if (data.status === 'completed') {
           setStatus('success')
           setShowFireworks(true)
-          setTimeout(() => router.push('/dashboard'), 3000)
+          setTimeout(() => setShowConfetti(true), 1000)
+          setTimeout(() => router.push('/dashboard'), 10000)
         } else {
           setStatus('failed')
         }
@@ -50,13 +53,19 @@ export default function PaymentCallback() {
         )}
 
         {status === 'success' && (
-          <div className="card" style={{ padding: 48 }}>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--brand-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'var(--brand-white)', fontSize: 32, fontWeight: 700 }}>✓</div>
-            <h2>Payment Successful</h2>
-            <p style={{ color: 'var(--gray-600)' }}>Your dashboard has been unlocked. Redirecting you now...</p>
-            <Link href="/dashboard">
-              <button className="cta" style={{ marginTop: 24 }}>Go to Dashboard</button>
-            </Link>
+          <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', opacity: 0.12, pointerEvents: 'none' }}>
+              <img src="/trophies 5.webp" alt="" style={{ width: 250, height: 250, objectFit: 'contain' }} />
+            </div>
+            <div className="card" style={{ padding: 48, position: 'relative', zIndex: 2 }}>
+              <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, var(--brand-red) 0%, #ff4444 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'var(--brand-white)', fontSize: 42, fontWeight: 700, boxShadow: '0 8px 24px rgba(255, 24, 26, 0.3)' }}>✓</div>
+              <h2 style={{ fontSize: 32, marginBottom: 16 }}>Payment Successful!</h2>
+              <p style={{ color: 'var(--gray-600)', fontSize: 18, marginBottom: 8 }}>Welcome to the winning team!</p>
+              <p style={{ color: 'var(--gray-500)', fontSize: 15 }}>Your premium dashboard is now unlocked. Redirecting you...</p>
+              <Link href="/dashboard">
+                <button className="cta" style={{ marginTop: 32, fontSize: 17, padding: '18px 40px' }}>Go to Dashboard Now</button>
+              </Link>
+            </div>
           </div>
         )}
 
@@ -90,8 +99,19 @@ export default function PaymentCallback() {
         }
       `}</style>
       
-      {/* Fireworks on Success */}
-      <Fireworks trigger={showFireworks} onComplete={() => setShowFireworks(false)} />
+      {/* Celebration Effects */}
+      <Fireworks
+        trigger={showFireworks}
+        intensity="heavy"
+        duration={10000}
+        onComplete={() => setShowFireworks(false)}
+      />
+      <ConfettiEffect
+        trigger={showConfetti}
+        style="celebration"
+        duration={5000}
+        onComplete={() => setShowConfetti(false)}
+      />
     </div>
   )
 }

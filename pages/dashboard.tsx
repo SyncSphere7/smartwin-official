@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import ConfettiEffect from '../components/ConfettiEffect'
 
 export default function Dashboard(){
   const [user, setUser] = useState<any>(null)
@@ -13,6 +14,7 @@ export default function Dashboard(){
   const [chatMessage, setChatMessage] = useState('')
   const [chatResponse, setChatResponse] = useState('')
   const [chatting, setChatting] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
   const router = useRouter()
 
   useEffect(()=>{
@@ -155,14 +157,27 @@ export default function Dashboard(){
       </div>
 
       {/* Latest Verified Proofs */}
-      <section>
+      <section style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: -50, right: 0, opacity: 0.08, pointerEvents: 'none' }}>
+          <img src="/celebrations 1.webp" alt="" className="dashboard-decoration" style={{ width: 200, height: 200, objectFit: 'contain' }} />
+        </div>
         <h3>Latest Verified Match Proofs</h3>
         {tickets.length === 0 ? (
-          <p style={{ color: 'var(--gray-600)' }}>No tickets available yet. Check back soon!</p>
+          <div style={{ textAlign: 'center', padding: '80px 40px' }}>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <img src="/trophy 5.webp" alt="" style={{ width: 150, height: 150, objectFit: 'contain', opacity: 0.3 }} />
+            </div>
+            <p style={{ color: 'var(--gray-600)', fontSize: 18, marginTop: 24 }}>No tickets available yet. Check back soon!</p>
+          </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {tickets.map((ticket, i) => (
-              <div key={ticket.id || i} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div
+                key={ticket.id || i}
+                className="card"
+                style={{ padding: 0, overflow: 'hidden', cursor: 'pointer' }}
+                onClick={() => ticket.verified && setShowCelebration(true)}
+              >
                 {ticket.thumbnail_url ? (
                   <img src={ticket.thumbnail_url} alt="Ticket proof" style={{ width: '100%', height: 150, objectFit: 'cover' }} />
                 ) : (
@@ -171,7 +186,7 @@ export default function Dashboard(){
                 <div style={{ padding: 12 }}>
                   <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--gray-900)' }}>{ticket.match_description || 'Match details'}</p>
                   {ticket.verified && (
-                    <span style={{ fontSize: 12, color: 'var(--brand-red)', fontWeight: 600 }}>Verified</span>
+                    <span style={{ fontSize: 12, color: 'var(--brand-red)', fontWeight: 600 }}>✓ Verified</span>
                   )}
                   {ticket.payout_amount && (
                     <p style={{ margin: '4px 0 0 0', fontSize: 14, color: 'var(--gray-700)', fontWeight: 600 }}>
@@ -193,6 +208,13 @@ export default function Dashboard(){
           <button className="cta">Contact Team</button>
         </Link>
       </div>
+
+      {/* Celebration Confetti */}
+      <ConfettiEffect
+        trigger={showCelebration}
+        style="standard"
+        onComplete={() => setShowCelebration(false)}
+      />
     </div>
   )
 }

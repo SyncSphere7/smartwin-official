@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import Logo from '../components/Logo'
 import TicketCarousel from '../components/TicketCarousel'
 import Fireworks from '../components/Fireworks'
+import ConfettiEffect from '../components/ConfettiEffect'
 
 export default function Home() {
   const { t } = useTranslation()
@@ -16,6 +17,8 @@ export default function Home() {
   const [aiLoading, setAiLoading] = useState(false)
   const [showAiWidget, setShowAiWidget] = useState(true)
   const [showFireworks, setShowFireworks] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [showWelcomeFireworks, setShowWelcomeFireworks] = useState(true)
 
   useEffect(() => {
     // Animated counter effect
@@ -150,8 +153,13 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div style={{ width: 520 }}>
-            <TicketCarousel />
+          <div className="hero-image-wrapper">
+            <div className="hero-glow"></div>
+            <img
+              src="/lionel-messi-argentina-celebrates-scoring-782686143.webp"
+              alt="Celebration"
+              className="hero-player-image"
+            />
           </div>
         </section>
 
@@ -888,7 +896,27 @@ export default function Home() {
       )}
 
       {/* Fireworks Effect */}
-      <Fireworks trigger={showFireworks} onComplete={() => setShowFireworks(false)} />
+      <Fireworks
+        trigger={showFireworks}
+        intensity="heavy"
+        duration={7000}
+        onComplete={() => setShowFireworks(false)}
+      />
+
+      {/* Welcome Fireworks */}
+      <Fireworks
+        trigger={showWelcomeFireworks}
+        intensity="light"
+        duration={2000}
+        onComplete={() => setShowWelcomeFireworks(false)}
+      />
+
+      {/* Confetti Effect */}
+      <ConfettiEffect
+        trigger={showConfetti}
+        style="celebration"
+        onComplete={() => setShowConfetti(false)}
+      />
     </div>
   )
 }
