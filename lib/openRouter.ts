@@ -3,7 +3,7 @@ import axios from 'axios'
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY || ''
 
-export async function openRouterChat(prompt: string, model = 'anthropic/claude-3.5-sonnet') {
+export async function openRouterChat(prompt: string, model = 'meta-llama/llama-3.1-8b-instruct:free') {
   if (!OPENROUTER_KEY) {
     throw new Error('OPENROUTER_API_KEY not set in environment variables')
   }
