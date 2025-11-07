@@ -130,8 +130,8 @@ export default function Home() {
               letterSpacing: '-0.03em',
               fontWeight: 800
             }}>
-              Premium Match<br/>
-              <span style={{ color: 'var(--brand-red)' }}>Intelligence</span> Access
+              Professional Match<br/>
+              <span style={{ color: 'var(--brand-red)' }}>Consultation</span> Access
             </h1>
             <p style={{ 
               color: 'var(--gray-600)', 
@@ -140,7 +140,7 @@ export default function Home() {
               lineHeight: 1.7,
               fontWeight: 400
             }}>
-              Join an exclusive community with verified winning data, AI-powered analysis, and direct team consultation. Professional-grade intelligence for serious players.
+              Pay $100 consultation fee to connect with our expert team. View verified winning proofs, then negotiate match details directly with us. Serious inquiries only.
             </p>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
               <Link href="/login">
@@ -149,7 +149,7 @@ export default function Home() {
                   style={{ fontSize: 17, padding: '20px 44px' }}
                   onClick={() => setShowFireworks(true)}
                 >
-                  Get Lifetime Access — $100
+                  Start Consultation — $100
                 </button>
               </Link>
             </div>
@@ -619,8 +619,8 @@ export default function Home() {
               color: 'var(--gray-700)',
               lineHeight: 1.6
             }}>
-              <strong style={{ color: 'var(--gray-900)' }}>Join today</strong> and get access to verified winning slips updated daily. 
-              <span style={{ color: 'var(--brand-red)', fontWeight: 600 }}> Limited spots available.</span>
+              <strong style={{ color: 'var(--gray-900)' }}>Pay $100 consultation fee</strong> to view verified proofs and negotiate match access with our team. 
+              <span style={{ color: 'var(--brand-red)', fontWeight: 600 }}> Non-refundable. Serious buyers only.</span>
             </p>
           </div>
         </section>
@@ -1195,7 +1195,7 @@ export default function Home() {
             marginRight: 'auto',
             lineHeight: 1.7
           }}>
-            One-time payment of $100 gets you lifetime access to our premium intelligence platform
+            Pay $100 consultation fee to access our team and negotiate fixed match details. Non-refundable.
           </p>
           <Link href="/login">
             <button 
@@ -1203,7 +1203,7 @@ export default function Home() {
               style={{ fontSize: 18, padding: '22px 56px' }}
               onClick={() => setShowFireworks(true)}
             >
-              Get Started Now
+              Start Consultation
             </button>
           </Link>
           <p style={{ 

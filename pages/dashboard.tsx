@@ -1,220 +1,277 @@
-import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import ConfettiEffect from '../components/ConfettiEffect'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import Image from 'next/image';
+import { supabase } from '../lib/supabaseClient';
 
-export default function Dashboard(){
-  const [user, setUser] = useState<any>(null)
-  const [userProfile, setUserProfile] = useState<any>(null)
-  const [tickets, setTickets] = useState<any[]>([])
-  const [stats, setStats] = useState({ totalWins: 0, totalPayout: 0, successRate: 0 })
-  const [loading, setLoading] = useState(true)
-  const [chatMessage, setChatMessage] = useState('')
-  const [chatResponse, setChatResponse] = useState('')
-  const [chatting, setChatting] = useState(false)
-  const [showCelebration, setShowCelebration] = useState(false)
-  const router = useRouter()
+interface ConsultationRequest {
+  id: string;
+  status: 'pending' | 'contacted' | 'negotiating' | 'completed' | 'declined';
+  payment_amount: number;
+  payment_method: string;
+  created_at: string;
+  contacted_at: string | null;
+}
 
-  useEffect(()=>{
-    async function loadUser() {
-      const { data: { user: authUser } } = await supabase.auth.getUser()
-      
-      if(!authUser){ 
-        router.push('/login')
-        return 
-      }
-      
-      setUser(authUser)
+export default function Dashboard() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [consultation, setConsultation] = useState<ConsultationRequest | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-      // Get user profile from database
-      const { data: profile } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUser.id)
-        .single()
+  useEffect(() => {
+    checkUserAndPayment();
+  }, []);
 
-      if (profile) {
-        setUserProfile(profile)
-        
-        // Check if user has paid
-        if (!profile.paid) {
-          router.push('/payment')
-          return
-        }
-      } else {
-        // Create user profile if doesn't exist
-        await supabase.from('users').insert({
-          id: authUser.id,
-          email: authUser.email,
-          paid: false
-        })
-        router.push('/payment')
-        return
-      }
-
-      // Load tickets
-      const { data: ticketData } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('visibility', 'public')
-        .order('created_at', { ascending: false })
-        .limit(8)
-
-      if (ticketData) {
-        setTickets(ticketData)
-        
-        // Calculate stats
-        const totalWins = ticketData.filter(t => t.verified).length
-        const totalPayout = ticketData.reduce((sum, t) => sum + (parseFloat(t.payout_amount) || 0), 0)
-        const successRate = ticketData.length > 0 ? (totalWins / ticketData.length * 100) : 0
-        
-        setStats({ totalWins, totalPayout, successRate })
-      }
-
-      setLoading(false)
-    }
-
-    loadUser()
-  },[router])
-
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    router.push('/')
-  }
-
-  async function handleChat(e: any) {
-    e.preventDefault()
-    if (!chatMessage.trim()) return
-
-    setChatting(true)
+  const checkUserAndPayment = async () => {
     try {
-      const response = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'chat', prompt: chatMessage })
-      })
-      const data = await response.json()
-      setChatResponse(data.choices?.[0]?.message?.content || 'No response from AI')
-    } catch (error) {
-      setChatResponse('Error connecting to AI. Please try again.')
+      // Check if user is authenticated
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        router.push('/login');
+        return;
+      }
+
+      setUser(user);
+
+      // Check if user has paid $100 and has consultation request
+      const { data: consultationData, error: consultationError } = await supabase
+        .from('consultation_requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (consultationError && consultationError.code !== 'PGRST116') {
+        // PGRST116 is "not found" error, which is acceptable
+        console.error('Consultation error:', consultationError);
+      }
+
+      if (!consultationData) {
+        // User hasn't paid yet, redirect to payment page
+        setError('You need to complete the $100 consultation payment to access the dashboard.');
+        setTimeout(() => router.push('/payment'), 3000);
+        return;
+      }
+
+      setConsultation(consultationData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error checking user:', err);
+      setError('An error occurred. Please try again.');
+      setLoading(false);
     }
-    setChatting(false)
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
+
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      pending: { text: 'Pending Review', color: 'bg-yellow-500' },
+      contacted: { text: 'Admin Contacted', color: 'bg-blue-500' },
+      negotiating: { text: 'Negotiating', color: 'bg-purple-500' },
+      completed: { text: 'Completed', color: 'bg-green-500' },
+      declined: { text: 'Declined', color: 'bg-red-500' }
+    };
+    const badge = badges[status as keyof typeof badges] || badges.pending;
+    return (
+      <span className={`${badge.color} text-white px-4 py-2 rounded-full text-sm font-semibold`}>
+        {badge.text}
+      </span>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading your dashboard...</div>
+      </div>
+    );
   }
 
-  if(loading) return <div className="container">Loading your dashboard...</div>
-
-  if(!userProfile?.paid) return null
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center">
+        <div className="bg-red-500/20 border border-red-500 text-white p-6 rounded-lg max-w-md text-center">
+          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container">
-      <Head><title>Dashboard - Smart-Win</title></Head>
-      
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-        <div>
-          <h2 style={{ margin: 0 }}>Dashboard</h2>
-          <p style={{ color: 'var(--muted)', margin: '4px 0 0 0' }}>Welcome back, {userProfile.full_name || user.email}</p>
-        </div>
-        <button className="ghost-cta" onClick={handleLogout}>Logout</button>
-      </header>
+    <>
+      <Head>
+        <title>Dashboard - Smart-Win Official</title>
+        <meta name="description" content="Your Smart-Win consultation dashboard" />
+      </Head>
 
-      {/* Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 32 }}>
-        <div className="card" style={{ padding: 24, borderLeft: '3px solid var(--brand-red)' }}>
-          <p style={{ color: 'var(--gray-600)', margin: '0 0 8px 0', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Wins</p>
-          <h3 style={{ color: 'var(--gray-900)', margin: 0, fontSize: 36 }}>{stats.totalWins}</h3>
-        </div>
-        <div className="card" style={{ padding: 24, borderLeft: '3px solid var(--brand-red)' }}>
-          <p style={{ color: 'var(--gray-600)', margin: '0 0 8px 0', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Payout</p>
-          <h3 style={{ color: 'var(--gray-900)', margin: 0, fontSize: 36 }}>${stats.totalPayout.toFixed(0)}</h3>
-        </div>
-        <div className="card" style={{ padding: 24, borderLeft: '3px solid var(--brand-red)' }}>
-          <p style={{ color: 'var(--gray-600)', margin: '0 0 8px 0', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Success Rate</p>
-          <h3 style={{ color: 'var(--gray-900)', margin: 0, fontSize: 36 }}>{stats.successRate.toFixed(0)}%</h3>
-        </div>
-      </div>
-
-      {/* AI Chat Widget */}
-      <div className="card" style={{ marginBottom: 32, padding: 24, background: 'var(--gray-900)', color: 'var(--brand-white)', border: '1px solid var(--gray-800)' }}>
-        <h3 style={{ margin: '0 0 12px 0', color: 'var(--brand-white)' }}>AI Assistant</h3>
-        <form onSubmit={handleChat} style={{ display: 'flex', gap: 12 }}>
-          <input 
-            value={chatMessage}
-            onChange={e => setChatMessage(e.target.value)}
-            placeholder="Ask me anything about matches, strategies, or your account..."
-            style={{ flex: 1, padding: 12, border: '1px solid var(--gray-700)', borderRadius: 4, fontSize: 15, background: 'var(--gray-800)', color: 'var(--brand-white)' }}
-          />
-          <button className="cta" type="submit" disabled={chatting}>
-            {chatting ? 'Processing...' : 'Ask'}
-          </button>
-        </form>
-        {chatResponse && (
-          <div style={{ marginTop: 16, padding: 16, background: 'var(--gray-800)', borderRadius: 4, border: '1px solid var(--gray-700)' }}>
-            <p style={{ margin: 0, color: 'var(--brand-white)', lineHeight: 1.6 }}>{chatResponse}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Latest Verified Proofs */}
-      <section style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', top: -50, right: 0, opacity: 0.08, pointerEvents: 'none' }}>
-          <img src="/celebrations 1.webp" alt="" className="dashboard-decoration" style={{ width: 200, height: 200, objectFit: 'contain' }} />
-        </div>
-        <h3>Latest Verified Match Proofs</h3>
-        {tickets.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 40px' }}>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <img src="/trophy 5.webp" alt="" style={{ width: 150, height: 150, objectFit: 'contain', opacity: 0.3 }} />
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900">
+        {/* Header */}
+        <header className="border-b border-green-500/30 bg-black/50 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <Image src="/Logo.png" alt="Smart-Win Logo" width={50} height={50} />
+              <span className="text-white font-bold text-xl">Smart-Win Dashboard</span>
             </div>
-            <p style={{ color: 'var(--gray-600)', fontSize: 18, marginTop: 24 }}>No tickets available yet. Check back soon!</p>
+            <button
+              onClick={handleLogout}
+              className="text-white hover:text-green-400 transition-colors"
+            >
+              Logout
+            </button>
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {tickets.map((ticket, i) => (
-              <div
-                key={ticket.id || i}
-                className="card"
-                style={{ padding: 0, overflow: 'hidden', cursor: 'pointer' }}
-                onClick={() => ticket.verified && setShowCelebration(true)}
-              >
-                {ticket.thumbnail_url ? (
-                  <img src={ticket.thumbnail_url} alt="Ticket proof" style={{ width: '100%', height: 150, objectFit: 'cover' }} />
-                ) : (
-                  <div className="ticket-preview" style={{ height: 150 }}>Proof {i + 1}</div>
-                )}
-                <div style={{ padding: 12 }}>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--gray-900)' }}>{ticket.match_description || 'Match details'}</p>
-                  {ticket.verified && (
-                    <span style={{ fontSize: 12, color: 'var(--brand-red)', fontWeight: 600 }}>✓ Verified</span>
-                  )}
-                  {ticket.payout_amount && (
-                    <p style={{ margin: '4px 0 0 0', fontSize: 14, color: 'var(--gray-700)', fontWeight: 600 }}>
-                      ${ticket.payout_amount}
-                    </p>
-                  )}
+        </header>
+
+        <div className="container mx-auto px-4 py-8">
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 border border-green-500 rounded-lg p-6 mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Welcome to Smart-Win! 🎉
+            </h1>
+            <p className="text-green-200">
+              Thank you for your consultation payment. Our team will review your request shortly.
+            </p>
+          </div>
+
+          {/* Consultation Status */}
+          {consultation && (
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-black/50 border border-green-500/30 rounded-lg p-6">
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <span>📊</span> Consultation Status
+                </h2>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-gray-400 text-sm">Current Status</p>
+                    {getStatusBadge(consultation.status)}
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm">Payment Amount</p>
+                    <p className="text-white font-semibold">${consultation.payment_amount}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm">Payment Method</p>
+                    <p className="text-white capitalize">{consultation.payment_method}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm">Request Date</p>
+                    <p className="text-white">{new Date(consultation.created_at).toLocaleDateString()}</p>
+                  </div>
                 </div>
               </div>
-            ))}
+
+              {/* Admin Contact Card */}
+              <div className="bg-gradient-to-br from-green-600 to-green-800 border border-green-400 rounded-lg p-6 shadow-lg">
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <span>📧</span> Contact Our Team
+                </h2>
+                <p className="text-green-100 mb-4">
+                  Ready to discuss your fixed match needs? Reach out to us directly:
+                </p>
+                <div className="bg-white/10 rounded-lg p-4 mb-4">
+                  <p className="text-gray-300 text-sm mb-1">Email Us At:</p>
+                  <a 
+                    href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL}`}
+                    className="text-white font-bold text-lg hover:text-green-300 transition-colors break-all"
+                  >
+                    {process.env.NEXT_PUBLIC_ADMIN_EMAIL}
+                  </a>
+                </div>
+                <a
+                  href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL}?subject=Consultation Request - ${user?.email}`}
+                  className="block w-full bg-white text-green-700 font-bold py-3 rounded-lg text-center hover:bg-green-100 transition-colors"
+                >
+                  Send Email Now
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Important Notice */}
+          <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-6 mb-8">
+            <h3 className="text-yellow-400 font-bold mb-2 flex items-center gap-2">
+              <span>⚠️</span> Important Information
+            </h3>
+            <ul className="text-yellow-200 space-y-2 text-sm">
+              <li>• The $100 consultation fee is <strong>non-refundable</strong></li>
+              <li>• Match prices are negotiated separately after consultation</li>
+              <li>• Our team typically responds within 24-48 hours</li>
+              <li>• Please check your email regularly for updates</li>
+            </ul>
           </div>
-        )}
-      </section>
 
-      {/* Contact Team */}
-      <div className="card" style={{ marginTop: 32, padding: 24 }}>
-        <h3 style={{ marginTop: 0 }}>Ready to Negotiate?</h3>
-        <p style={{ color: 'var(--gray-600)' }}>Contact our team to discuss upcoming matches and exclusive opportunities.</p>
-        <Link href="/contact">
-          <button className="cta">Contact Team</button>
-        </Link>
+          {/* Verified Tickets Gallery - Social Proof */}
+          <div className="bg-black/50 border border-green-500/30 rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <span>✅</span> Our Verified Winning Tickets
+            </h2>
+            <p className="text-gray-400 mb-6">
+              See proof of our past successes. These are real tickets from satisfied clients.
+            </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((num) => (
+                <div key={num} className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-green-700 rounded-lg blur opacity-25 group-hover:opacity-75 transition-opacity"></div>
+                  <div className="relative bg-black border border-green-500/30 rounded-lg overflow-hidden">
+                    <Image
+                      src={`/Ticket ${num}.jpeg`}
+                      alt={`Verified Winning Ticket ${num}`}
+                      width={300}
+                      height={400}
+                      className="w-full h-auto"
+                    />
+                    <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                      <span>✓</span> Verified
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Next Steps */}
+          <div className="mt-8 bg-black/50 border border-green-500/30 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-white mb-4">What Happens Next?</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                  1️⃣
+                </div>
+                <h4 className="text-white font-semibold mb-2">Admin Review</h4>
+                <p className="text-gray-400 text-sm">
+                  Our team reviews your consultation request and payment details
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                  2️⃣
+                </div>
+                <h4 className="text-white font-semibold mb-2">Email Contact</h4>
+                <p className="text-gray-400 text-sm">
+                  We'll reach out via email to discuss your fixed match requirements
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                  3️⃣
+                </div>
+                <h4 className="text-white font-semibold mb-2">Negotiation</h4>
+                <p className="text-gray-400 text-sm">
+                  We negotiate match details, pricing, and finalize your order
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Celebration Confetti */}
-      <ConfettiEffect
-        trigger={showCelebration}
-        style="standard"
-        onComplete={() => setShowCelebration(false)}
-      />
-    </div>
-  )
+    </>
+  );
 }

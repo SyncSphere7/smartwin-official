@@ -77,19 +77,31 @@ export default function Payment() {
             <div className="card" style={{ padding: 32, marginBottom: 32 }}>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <h2 style={{ color: 'var(--brand-red)', marginTop: 0, fontSize: 48, fontWeight: 800 }}>$100</h2>
-                <p style={{ fontSize: 18, color: 'var(--gray-600)', margin: 0 }}>One-time payment • Lifetime access</p>
+                <p style={{ fontSize: 18, color: 'var(--gray-600)', margin: 0 }}>Consultation Fee • Non-Refundable</p>
               </div>
               
               <div style={{ textAlign: 'left', marginBottom: 32 }}>
                 <h3 style={{ marginBottom: 16 }}>What you get:</h3>
                 <ul style={{ color: 'var(--gray-700)', lineHeight: 2, fontSize: 16 }}>
-                  <li>✓ Full dashboard access with verified match proofs</li>
-                  <li>✓ Historical winning data & screenshots</li>
-                  <li>✓ Direct team contact for match negotiations</li>
-                  <li>✓ AI-powered match insights & analysis</li>
-                  <li>✓ Lifetime access (no recurring fees)</li>
-                  <li>✓ Priority customer support</li>
+                  <li>✓ Access to contact our expert team via email</li>
+                  <li>✓ View verified winning ticket proofs from past clients</li>
+                  <li>✓ Consultation dashboard to track your request status</li>
+                  <li>✓ Direct negotiation for fixed match details & pricing</li>
+                  <li>✓ Priority response within 24-48 hours</li>
+                  <li>⚠️ <strong>Note:</strong> Match prices negotiated separately after consultation</li>
                 </ul>
+              </div>
+
+              <div style={{ 
+                background: 'var(--warning-bg, #FFF3CD)', 
+                border: '1px solid var(--warning-border, #FFE69C)',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16
+              }}>
+                <p style={{ margin: 0, color: 'var(--warning-text, #856404)', fontSize: 14, fontWeight: 600 }}>
+                  ⚠️ <strong>Important:</strong> The $100 consultation fee is non-refundable. This fee filters serious buyers and grants you access to negotiate match details with our team.
+                </p>
               </div>
             </div>
 
