@@ -2,39 +2,45 @@ import axios from 'axios'
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY || ''
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://smartwinofficial.co.uk'
 
 export async function openRouterChat(prompt: string, model = 'meta-llama/llama-3.1-8b-instruct:free') {
   if (!OPENROUTER_KEY) {
     throw new Error('OPENROUTER_API_KEY not set in environment variables')
   }
 
-  console.log('OpenRouter request:', { model, promptLength: prompt.length })
+  console.log('OpenRouter request:', { 
+    model, 
+    promptLength: prompt.length, 
+    hasApiKey: !!OPENROUTER_KEY,
+    apiKeyPrefix: OPENROUTER_KEY.substring(0, 10) + '...',
+    siteUrl: SITE_URL
+  })
 
   try {
+    const requestData = {
+      model,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ]
+    }
+
+    console.log('Request data:', requestData)
+
     const response = await axios.post(
       OPENROUTER_URL,
-      {
-        model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a professional sports betting analyst and assistant for Smart-Win. Provide helpful, accurate information about betting strategies, match analysis, and platform features. Keep responses concise and professional.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 500
-      },
+      requestData,
       {
         headers: {
           'Authorization': `Bearer ${OPENROUTER_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-          'X-Title': 'Smart-Win'
+          'HTTP-Referer': SITE_URL,
+          'X-Title': 'Smart-Win',
+          'Content-Type': 'application/json'
         },
-        timeout: 30000 // 30 second timeout
+        timeout: 30000
       }
     )
 
