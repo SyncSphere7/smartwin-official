@@ -898,16 +898,12 @@ export default function Home() {
       {/* Fireworks Effect */}
       <Fireworks
         trigger={showFireworks}
-        intensity="heavy"
-        duration={7000}
         onComplete={() => setShowFireworks(false)}
       />
 
       {/* Welcome Fireworks */}
       <Fireworks
         trigger={showWelcomeFireworks}
-        intensity="light"
-        duration={2000}
         onComplete={() => setShowWelcomeFireworks(false)}
       />
 

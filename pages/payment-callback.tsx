@@ -102,8 +102,6 @@ export default function PaymentCallback() {
       {/* Celebration Effects */}
       <Fireworks
         trigger={showFireworks}
-        intensity="heavy"
-        duration={10000}
         onComplete={() => setShowFireworks(false)}
       />
       <ConfettiEffect
