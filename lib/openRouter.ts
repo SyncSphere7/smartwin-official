@@ -8,6 +8,8 @@ export async function openRouterChat(prompt: string, model = 'meta-llama/llama-3
     throw new Error('OPENROUTER_API_KEY not set in environment variables')
   }
 
+  console.log('OpenRouter request:', { model, promptLength: prompt.length })
+
   try {
     const response = await axios.post(
       OPENROUTER_URL,
@@ -31,17 +33,42 @@ export async function openRouterChat(prompt: string, model = 'meta-llama/llama-3
           'Content-Type': 'application/json',
           'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
           'X-Title': 'Smart-Win'
-        }
+        },
+        timeout: 30000 // 30 second timeout
       }
     )
 
+    console.log('OpenRouter raw response:', {
+      status: response.status,
+      hasChoices: !!response.data.choices,
+      choicesLength: response.data.choices?.length,
+      firstChoice: response.data.choices?.[0]
+    })
+
+    const content = response.data.choices[0]?.message?.content
+    
+    if (!content) {
+      console.error('No content in response:', response.data)
+      throw new Error('No response content received from AI')
+    }
+
     return {
-      response: response.data.choices[0]?.message?.content || 'No response received',
+      response: content,
       model: response.data.model
     }
   } catch (error: any) {
-    console.error('OpenRouter error:', error.response?.data || error.message)
-    throw new Error(error.response?.data?.error?.message || 'Failed to get AI response')
+    console.error('OpenRouter error details:', {
+      message: error.message,
+      responseData: error.response?.data,
+      responseStatus: error.response?.status,
+      isTimeout: error.code === 'ECONNABORTED'
+    })
+    
+    if (error.response?.data?.error) {
+      throw new Error(`OpenRouter API: ${error.response.data.error.message || error.response.data.error}`)
+    }
+    
+    throw new Error(error.message || 'Failed to get AI response')
   }
 }
 

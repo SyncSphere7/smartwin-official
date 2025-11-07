@@ -45,16 +45,33 @@ export default function Home() {
     if (!aiMessage.trim()) return
     
     setAiLoading(true)
+    setAiResponse('') // Clear previous response
     try {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: aiMessage })
       })
+      
       const data = await res.json()
-      setAiResponse(data.response || 'Sorry, I could not process that request.')
+      
+      // Check if there's an error in the response
+      if (data.error) {
+        setAiResponse(`Error: ${data.error}`)
+        console.error('AI API error:', data.error)
+        return
+      }
+      
+      // Check if response exists
+      if (data.response) {
+        setAiResponse(data.response)
+      } else {
+        setAiResponse('Sorry, I could not process that request. Please try again.')
+        console.error('No response field in data:', data)
+      }
     } catch (error) {
-      setAiResponse('Error connecting to AI. Please try again.')
+      console.error('Fetch error:', error)
+      setAiResponse('Error connecting to AI. Please check your internet connection and try again.')
     } finally {
       setAiLoading(false)
     }
