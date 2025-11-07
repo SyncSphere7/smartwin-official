@@ -20,16 +20,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (action === 'chat' || !action) {
-      // Using Meta Llama 3.1 8B (FREE on OpenRouter)
-      console.log('Calling OpenRouter with Llama 3.1 8B...')
-      const response = await openRouterChat(prompt, 'meta-llama/llama-3.1-8b-instruct:free')
+      // Using Mistral 7B Instruct (FREE on OpenRouter - Most Reliable)
+      // Backup options: 'meta-llama/llama-3.1-8b-instruct:free', 'meta-llama/llama-3.2-3b-instruct:free'
+      console.log('Calling OpenRouter with Mistral 7B...')
+      const response = await openRouterChat(prompt, 'mistralai/mistral-7b-instruct:free')
       console.log('OpenRouter response received:', { hasResponse: !!response.response, model: response.model })
       return res.status(200).json(response)
     }
     
     if (action === 'summarize') {
       const enhancedPrompt = `You are a sports betting analyst. Summarize this ticket information concisely and verify its authenticity markers: ${prompt}`
-      const response = await openRouterChat(enhancedPrompt, 'meta-llama/llama-3.1-8b-instruct:free')
+      const response = await openRouterChat(enhancedPrompt, 'mistralai/mistral-7b-instruct:free')
       return res.status(200).json(response)
     }
     

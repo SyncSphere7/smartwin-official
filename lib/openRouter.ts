@@ -4,7 +4,7 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY || ''
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://smartwinofficial.co.uk'
 
-export async function openRouterChat(prompt: string, model = 'meta-llama/llama-3.1-8b-instruct:free') {
+export async function openRouterChat(prompt: string, model = 'mistralai/mistral-7b-instruct:free') {
   if (!OPENROUTER_KEY) {
     throw new Error('OPENROUTER_API_KEY not set in environment variables')
   }
