@@ -243,6 +243,29 @@ a:hover {
   }
 }
 
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  5% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
 .hero-image-wrapper {
   position: relative;
   width: 100%;

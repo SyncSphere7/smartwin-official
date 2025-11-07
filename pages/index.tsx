@@ -155,11 +155,64 @@ export default function Home() {
           </div>
           <div className="hero-image-wrapper">
             <div className="hero-glow"></div>
-            <img
-              src="/lionel-messi-argentina-celebrates-scoring-782686143.webp"
-              alt="Celebration"
-              className="hero-player-image"
-            />
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <img
+                src="/lionel-messi-argentina-celebrates-scoring-782686143.webp"
+                alt="Messi Celebration"
+                className="hero-player-image"
+                style={{ 
+                  animation: 'fadeInOut 20s infinite',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+              <img
+                src="/cristiano 1.webp"
+                alt="Cristiano Ronaldo"
+                className="hero-player-image"
+                style={{ 
+                  animation: 'fadeInOut 20s infinite 5s',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+              <img
+                src="/0_Bukayo-Saka.webp"
+                alt="Bukayo Saka"
+                className="hero-player-image"
+                style={{ 
+                  animation: 'fadeInOut 20s infinite 10s',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+              <img
+                src="/Harland 1.jpg"
+                alt="Erling Haaland"
+                className="hero-player-image"
+                style={{ 
+                  animation: 'fadeInOut 20s infinite 15s',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
           </div>
         </section>
 
@@ -339,8 +392,11 @@ export default function Home() {
                       width: 48,
                       height: 48,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      flexShrink: 0
+                      backgroundImage: 'url(/liverpool.jpeg)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      flexShrink: 0,
+                      border: '2px solid var(--brand-red)'
                     }}></div>
                     <div>
                       <div style={{ fontWeight: 700, marginBottom: 4, color: 'var(--gray-900)' }}>Marcus T.</div>
@@ -363,8 +419,11 @@ export default function Home() {
                       width: 48,
                       height: 48,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                      flexShrink: 0
+                      backgroundImage: 'url(/chelsea trophy.webp)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      flexShrink: 0,
+                      border: '2px solid var(--brand-yellow)'
                     }}></div>
                     <div>
                       <div style={{ fontWeight: 700, marginBottom: 4, color: 'var(--gray-900)' }}>Sarah K.</div>
@@ -412,6 +471,136 @@ export default function Home() {
                 Every win tells a story
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Proof of Winning Tickets */}
+        <section style={{ marginTop: 120, marginBottom: 120 }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 style={{ 
+              margin: '0 0 20px 0',
+              fontSize: 48,
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'var(--gray-900)'
+            }}>
+              Real Winning Tickets, Real Results
+            </h2>
+            <p style={{ 
+              color: 'var(--gray-600)', 
+              fontSize: 20, 
+              margin: 0,
+              lineHeight: 1.7,
+              maxWidth: 700,
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              These are actual verified betting slips from our members. Every ticket is AI-authenticated and represents real payouts.
+            </p>
+          </div>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: 24 
+          }}>
+            {[1, 2, 3, 4].map((num) => (
+              <div 
+                key={num}
+                className="card"
+                style={{ 
+                  padding: 0,
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                }}
+              >
+                <div style={{ 
+                  position: 'relative',
+                  paddingBottom: '133%',
+                  background: 'var(--gray-100)',
+                  overflow: 'hidden'
+                }}>
+                  <img 
+                    src={`/Ticket ${num}.jpeg`}
+                    alt={`Winning Ticket ${num}`}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    background: 'rgba(16, 185, 129, 0.95)',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    backdropFilter: 'blur(10px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}>
+                    <span>✓</span> VERIFIED
+                  </div>
+                </div>
+                <div style={{ padding: 16 }}>
+                  <div style={{ 
+                    fontSize: 14, 
+                    fontWeight: 700, 
+                    color: 'var(--gray-900)',
+                    marginBottom: 4
+                  }}>
+                    Winning Ticket #{num}
+                  </div>
+                  <div style={{ 
+                    fontSize: 13, 
+                    color: 'var(--gray-600)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6
+                  }}>
+                    <span style={{ color: 'var(--brand-yellow)' }}>★</span>
+                    Authenticated by AI
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{ 
+            textAlign: 'center', 
+            marginTop: 48,
+            padding: '24px',
+            background: 'var(--gray-50)',
+            borderRadius: 12,
+            border: '1px solid var(--gray-200)'
+          }}>
+            <p style={{ 
+              margin: 0,
+              fontSize: 15,
+              color: 'var(--gray-700)',
+              lineHeight: 1.6
+            }}>
+              <strong style={{ color: 'var(--gray-900)' }}>Join today</strong> and get access to verified winning slips updated daily. 
+              <span style={{ color: 'var(--brand-red)', fontWeight: 600 }}> Limited spots available.</span>
+            </p>
           </div>
         </section>
 
@@ -506,6 +695,218 @@ export default function Home() {
               }}>
                 Success Rate
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Celebration Gallery */}
+        <section style={{ marginTop: 120, marginBottom: 120 }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h2 style={{ 
+              margin: '0 0 16px 0',
+              fontSize: 42,
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'var(--gray-900)'
+            }}>
+              Champions Trust Smart-Win
+            </h2>
+            <p style={{ 
+              color: 'var(--gray-600)', 
+              fontSize: 18, 
+              margin: 0,
+              lineHeight: 1.7
+            }}>
+              Join the winning teams and celebrate success with verified data
+            </p>
+          </div>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(3, 1fr)', 
+            gap: 24 
+          }}>
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src="/celebrations 1.webp"
+                alt="Team Celebration"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                padding: '32px 20px 20px',
+                color: 'white'
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>Victory Moments</div>
+              </div>
+            </div>
+
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src="/trophy.jpeg"
+                alt="Trophy Celebration"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                padding: '32px 20px 20px',
+                color: 'white'
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>Championship Glory</div>
+              </div>
+            </div>
+
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src="/trophy 5.webp"
+                alt="Winners Trophy"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                padding: '32px 20px 20px',
+                color: 'white'
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>Winning Legacy</div>
+              </div>
+            </div>
+
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src="/trophies 5.webp"
+                alt="Multiple Trophies"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                padding: '32px 20px 20px',
+                color: 'white'
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>Champions Collection</div>
+              </div>
+            </div>
+
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative'
+              }}
+            >
+              <img 
+                src="/liverpool 1.jpeg"
+                alt="Liverpool Celebration"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                padding: '32px 20px 20px',
+                color: 'white'
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>Team Triumph</div>
+              </div>
+            </div>
+
+            <div 
+              className="card"
+              style={{ 
+                padding: 0,
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                position: 'relative',
+                gridColumn: 'span 1'
+              }}
+            >
+              <div style={{
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 32,
+                textAlign: 'center',
+                color: 'white'
+              }}>
+                <div style={{ fontSize: 48, fontWeight: 800, marginBottom: 8, color: 'var(--brand-yellow)' }}>500+</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--gray-300)' }}>Verified Winners</div>
+                <div style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 8 }}>Join them today</div>
+              </div>
             </div>
           </div>
         </section>
