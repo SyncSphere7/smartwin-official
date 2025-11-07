@@ -60,14 +60,16 @@ export default function Payment() {
   return (
     <div className="container">
       <Head>
-        <title>Complete Payment - Smart-Win</title>
+        <title>Consultation Payment - Smart-Win</title>
+        <meta name="description" content="Pay $100 consultation fee to access our expert team and verified match proofs. Non-refundable." />
       </Head>
 
       <div style={{ maxWidth: 800, margin: '60px auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <h1 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>Unlock Premium Access</h1>
+          <h1 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>Unlock Consultation Access</h1>
           <p style={{ fontSize: 18, color: 'var(--gray-600)' }}>
             Choose your preferred payment method
+          </p>
           </p>
         </div>
 

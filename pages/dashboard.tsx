@@ -109,8 +109,8 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard - Smart-Win Official</title>
-        <meta name="description" content="Your Smart-Win consultation dashboard" />
+        <title>Consultation Dashboard - Smart-Win</title>
+        <meta name="description" content="Your Smart-Win consultation dashboard. Contact our team and view verified winning proofs." />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900">

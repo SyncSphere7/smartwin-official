@@ -80,8 +80,8 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>{t('siteTitle')} - Verified Fixed Match Proofs</title>
-        <meta name="description" content="AI-verified match proofs and premium dashboard access" />
+        <title>{t('siteTitle')} - Verified Match Consultancy Proofs</title>
+        <meta name="description" content="Professional match consultancy with verified winning proofs. $100 consultation fee to access expert team and negotiate fixed match details." />
         <link rel="icon" href="/Smart_win_logo-transparent.png" />
       </Head>
 

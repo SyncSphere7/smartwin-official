@@ -68,7 +68,8 @@ export default function Login() {
   return (
     <div className="container">
       <Head>
-        <title>{mode === 'login' ? 'Login' : 'Sign Up'} - Smart-Win</title>
+        <title>{mode === 'login' ? 'Login' : 'Sign Up'} - Smart-Win Consultancy</title>
+        <meta name="description" content="Sign in or create an account to access Smart-Win match consultancy services." />
       </Head>
 
       <div style={{ maxWidth: 420, margin: '60px auto' }}>
