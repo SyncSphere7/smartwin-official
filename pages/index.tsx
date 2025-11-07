@@ -161,13 +161,14 @@ export default function Home() {
                 alt="Messi Celebration"
                 className="hero-player-image"
                 style={{ 
-                  animation: 'fadeInOut 20s infinite',
+                  animation: 'fadeInOut 20s ease-in-out infinite',
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain'
+                  objectFit: 'contain',
+                  opacity: 0
                 }}
               />
               <img
@@ -175,13 +176,14 @@ export default function Home() {
                 alt="Cristiano Ronaldo"
                 className="hero-player-image"
                 style={{ 
-                  animation: 'fadeInOut 20s infinite 5s',
+                  animation: 'fadeInOut 20s ease-in-out infinite 5s',
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain'
+                  objectFit: 'contain',
+                  opacity: 0
                 }}
               />
               <img
@@ -189,13 +191,14 @@ export default function Home() {
                 alt="Bukayo Saka"
                 className="hero-player-image"
                 style={{ 
-                  animation: 'fadeInOut 20s infinite 10s',
+                  animation: 'fadeInOut 20s ease-in-out infinite 10s',
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain'
+                  objectFit: 'contain',
+                  opacity: 0
                 }}
               />
               <img
@@ -203,13 +206,14 @@ export default function Home() {
                 alt="Erling Haaland"
                 className="hero-player-image"
                 style={{ 
-                  animation: 'fadeInOut 20s infinite 15s',
+                  animation: 'fadeInOut 20s ease-in-out infinite 15s',
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain'
+                  objectFit: 'contain',
+                  opacity: 0
                 }}
               />
             </div>
