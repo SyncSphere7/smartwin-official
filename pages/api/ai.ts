@@ -11,14 +11,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    if (action === 'chat') {
-      const response = await openRouterChat(prompt, 'meta-llama/llama-3.2-3b-instruct:free')
+    if (action === 'chat' || !action) {
+      // Default model: Claude 3.5 Sonnet (best quality)
+      // Alternatives: 'google/gemini-pro-1.5', 'openai/gpt-4o', 'anthropic/claude-3-opus'
+      const response = await openRouterChat(prompt, 'anthropic/claude-3.5-sonnet')
       return res.status(200).json(response)
     }
     
     if (action === 'summarize') {
       const enhancedPrompt = `You are a sports betting analyst. Summarize this ticket information concisely and verify its authenticity markers: ${prompt}`
-      const response = await openRouterChat(enhancedPrompt, 'meta-llama/llama-3.2-3b-instruct:free')
+      const response = await openRouterChat(enhancedPrompt, 'anthropic/claude-3.5-sonnet')
       return res.status(200).json(response)
     }
     
