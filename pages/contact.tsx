@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useToast } from '../hooks/useToast'
+import ToastContainer from '../components/ToastContainer'
 
 export default function Contact() {
   const [user, setUser] = useState<any>(null)
@@ -10,6 +12,7 @@ export default function Contact() {
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
   const router = useRouter()
+  const { toasts, showSuccess, showError, removeToast } = useToast()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -51,11 +54,11 @@ export default function Contact() {
         })
       })
 
-      alert('Message sent! We\'ll get back to you soon.')
+      showSuccess('Message sent! We\'ll get back to you soon.')
       setSubject('')
       setMessage('')
     } catch (error: any) {
-      alert('Failed to send message: ' + error.message)
+      showError('Failed to send message: ' + error.message)
     } finally {
       setSending(false)
     }
@@ -64,10 +67,12 @@ export default function Contact() {
   if (!user) return <div className="container">Loading...</div>
 
   return (
-    <div className="container">
-      <Head>
-        <title>Contact Team - Smart-Win</title>
-      </Head>
+    <>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      <div className="container">
+        <Head>
+          <title>Contact Team - Smart-Win</title>
+        </Head>
 
       <div style={{ maxWidth: 600, margin: '60px auto' }}>
         <h1>Contact Our Team</h1>
@@ -118,5 +123,6 @@ export default function Contact() {
         </div>
       </div>
     </div>
+    </>
   )
 }

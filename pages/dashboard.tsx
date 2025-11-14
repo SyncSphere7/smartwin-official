@@ -28,7 +28,7 @@ export default function Dashboard() {
     try {
       // Check if user is authenticated
       const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
+
       if (authError || !user) {
         router.push('/login');
         return;
@@ -73,15 +73,15 @@ export default function Dashboard() {
 
   const getStatusBadge = (status: string) => {
     const badges = {
-      pending: { text: 'Pending Review', color: 'bg-yellow-500' },
-      contacted: { text: 'Admin Contacted', color: 'bg-blue-500' },
-      negotiating: { text: 'Negotiating', color: 'bg-purple-500' },
-      completed: { text: 'Completed', color: 'bg-green-500' },
-      declined: { text: 'Declined', color: 'bg-red-500' }
+      pending: { text: 'Pending Review', className: 'status-pending' },
+      contacted: { text: 'Admin Contacted', className: 'status-contacted' },
+      negotiating: { text: 'Negotiating', className: 'status-negotiating' },
+      completed: { text: 'Completed', className: 'status-completed' },
+      declined: { text: 'Declined', className: 'status-declined' }
     };
     const badge = badges[status as keyof typeof badges] || badges.pending;
     return (
-      <span className={`${badge.color} text-white px-4 py-2 rounded-full text-sm font-semibold`}>
+      <span className={`status-badge ${badge.className}`}>
         {badge.text}
       </span>
     );
@@ -89,7 +89,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center">
+      <div className="dashboard-bg flex-center">
         <div className="text-white text-xl">Loading your dashboard...</div>
       </div>
     );
@@ -97,10 +97,10 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center">
-        <div className="bg-red-500/20 border border-red-500 text-white p-6 rounded-lg max-w-md text-center">
-          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-          <p>{error}</p>
+      <div className="dashboard-bg flex-center">
+        <div className="error-card">
+          <h2 className="text-xl font-bold mb-2 text-white">Access Denied</h2>
+          <p className="text-white">{error}</p>
         </div>
       </div>
     );
@@ -113,26 +113,26 @@ export default function Dashboard() {
         <meta name="description" content="Your Smart-Win consultation dashboard. Contact our team and view verified winning proofs." />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900">
+      <div className="dashboard-bg">
         {/* Header */}
-        <header className="border-b border-green-500/30 bg-black/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <header className="dashboard-header">
+          <div className="dashboard-container flex-between py-4">
             <div className="flex items-center gap-3">
               <Image src="/Logo.png" alt="Smart-Win Logo" width={50} height={50} />
               <span className="text-white font-bold text-xl">Smart-Win Dashboard</span>
             </div>
             <button
               onClick={handleLogout}
-              className="text-white hover:text-green-400 transition-colors"
+              className="btn-logout"
             >
               Logout
             </button>
           </div>
         </header>
 
-        <div className="container mx-auto px-4 py-8">
+        <div className="dashboard-container py-8">
           {/* Welcome Section */}
-          <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 border border-green-500 rounded-lg p-6 mb-8">
+          <div className="welcome-card">
             <h1 className="text-3xl font-bold text-white mb-2">
               Welcome to Smart-Win! 🎉
             </h1>
@@ -143,8 +143,8 @@ export default function Dashboard() {
 
           {/* Consultation Status */}
           {consultation && (
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-black/50 border border-green-500/30 rounded-lg p-6">
+            <div className="grid-2 mb-8">
+              <div className="dashboard-card">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <span>📊</span> Consultation Status
                 </h2>
@@ -169,25 +169,25 @@ export default function Dashboard() {
               </div>
 
               {/* Admin Contact Card */}
-              <div className="bg-gradient-to-br from-green-600 to-green-800 border border-green-400 rounded-lg p-6 shadow-lg">
+              <div className="contact-card">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <span>📧</span> Contact Our Team
                 </h2>
                 <p className="text-green-100 mb-4">
                   Ready to discuss your fixed match needs? Reach out to us directly:
                 </p>
-                <div className="bg-white/10 rounded-lg p-4 mb-4">
-                  <p className="text-gray-300 text-sm mb-1">Email Us At:</p>
-                  <a 
+                <div className="bg-white-10 rounded-lg p-4 mb-4">
+                  <p className="text-gray-300 text-sm mb-2">Email Us At:</p>
+                  <a
                     href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL}`}
-                    className="text-white font-bold text-lg hover:text-green-300 transition-colors break-all"
+                    className="text-white font-bold text-lg hover-green-300 transition-colors break-all block"
                   >
                     {process.env.NEXT_PUBLIC_ADMIN_EMAIL}
                   </a>
                 </div>
                 <a
                   href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL}?subject=Consultation Request - ${user?.email}`}
-                  className="block w-full bg-white text-green-700 font-bold py-3 rounded-lg text-center hover:bg-green-100 transition-colors"
+                  className="btn-white block w-full text-center"
                 >
                   Send Email Now
                 </a>
@@ -196,7 +196,7 @@ export default function Dashboard() {
           )}
 
           {/* Important Notice */}
-          <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-6 mb-8">
+          <div className="warning-card">
             <h3 className="text-yellow-400 font-bold mb-2 flex items-center gap-2">
               <span>⚠️</span> Important Information
             </h3>
@@ -209,18 +209,18 @@ export default function Dashboard() {
           </div>
 
           {/* Verified Tickets Gallery - Social Proof */}
-          <div className="bg-black/50 border border-green-500/30 rounded-lg p-6">
+          <div className="dashboard-card">
             <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <span>✅</span> Our Verified Winning Tickets
             </h2>
             <p className="text-gray-400 mb-6">
               See proof of our past successes. These are real tickets from satisfied clients.
             </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid-4 grid-2-md">
               {[1, 2, 3, 4].map((num) => (
-                <div key={num} className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-green-700 rounded-lg blur opacity-25 group-hover:opacity-75 transition-opacity"></div>
-                  <div className="relative bg-black border border-green-500/30 rounded-lg overflow-hidden">
+                <div key={num} className="relative ticket-glow-parent">
+                  <div className="ticket-glow"></div>
+                  <div className="relative dashboard-card overflow-hidden">
                     <Image
                       src={`/Ticket ${num}.jpeg`}
                       alt={`Verified Winning Ticket ${num}`}
@@ -228,7 +228,7 @@ export default function Dashboard() {
                       height={400}
                       className="w-full h-auto"
                     />
-                    <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <div className="verified-badge">
                       <span>✓</span> Verified
                     </div>
                   </div>
@@ -238,11 +238,11 @@ export default function Dashboard() {
           </div>
 
           {/* Next Steps */}
-          <div className="mt-8 bg-black/50 border border-green-500/30 rounded-lg p-6">
+          <div className="mt-8 dashboard-card">
             <h3 className="text-xl font-bold text-white mb-4">What Happens Next?</h3>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid-3">
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                <div className="step-circle">
                   1️⃣
                 </div>
                 <h4 className="text-white font-semibold mb-2">Admin Review</h4>
@@ -251,7 +251,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                <div className="step-circle">
                   2️⃣
                 </div>
                 <h4 className="text-white font-semibold mb-2">Email Contact</h4>
@@ -260,7 +260,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                <div className="step-circle">
                   3️⃣
                 </div>
                 <h4 className="text-white font-semibold mb-2">Negotiation</h4>
