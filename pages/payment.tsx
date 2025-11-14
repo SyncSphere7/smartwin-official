@@ -4,6 +4,8 @@ import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import BitcoinPayment from '../components/BitcoinPayment'
+import { useToast } from '../hooks/useToast'
+import ToastContainer from '../components/ToastContainer'
 
 export default function Payment() {
   const [user, setUser] = useState<any>(null)
@@ -11,6 +13,7 @@ export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState<'select' | 'pesapal' | 'bitcoin'>('select')
   const router = useRouter()
   const { t } = useTranslation()
+  const { toasts, showError, removeToast } = useToast()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -45,11 +48,11 @@ export default function Payment() {
         // Redirect to Pesapal payment page
         window.location.href = data.redirect_url
       } else {
-        alert('Payment initialization failed. Please try again.')
+        showError('Payment initialization failed. Please try again.')
       }
     } catch (error) {
       console.error('Payment error:', error)
-      alert('An error occurred. Please try again.')
+      showError('An error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -58,18 +61,19 @@ export default function Payment() {
   if (!user) return <div className="container">Loading...</div>
 
   return (
-    <div className="container">
-      <Head>
-        <title>Consultation Payment - Smart-Win</title>
-        <meta name="description" content="Pay $100 consultation fee to access our expert team and verified match proofs. Non-refundable." />
-      </Head>
+    <>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      <div className="container">
+        <Head>
+          <title>Consultation Payment - Smart-Win</title>
+          <meta name="description" content="Pay $100 consultation fee to access our expert team and verified match proofs. Non-refundable." />
+        </Head>
 
       <div style={{ maxWidth: 800, margin: '60px auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <h1 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>Unlock Consultation Access</h1>
           <p style={{ fontSize: 18, color: 'var(--gray-600)' }}>
             Choose your preferred payment method
-          </p>
           </p>
         </div>
 
@@ -254,5 +258,6 @@ export default function Payment() {
         )}
       </div>
     </div>
+    </>
   )
 }

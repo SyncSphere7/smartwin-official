@@ -2,6 +2,8 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
+import { useToast } from '../hooks/useToast'
+import ToastContainer from '../components/ToastContainer'
 
 export default function Admin(){
   const [isAdmin, setIsAdmin] = useState(false)
@@ -10,7 +12,7 @@ export default function Admin(){
   const [tickets, setTickets] = useState<any[]>([])
   const [payments, setPayments] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState<'users' | 'tickets' | 'payments'>('users')
-  
+
   // Upload form
   const [uploading, setUploading] = useState(false)
   const [matchDescription, setMatchDescription] = useState('')
@@ -18,6 +20,7 @@ export default function Admin(){
   const [file, setFile] = useState<File | null>(null)
 
   const router = useRouter()
+  const { toasts, showSuccess, showError, removeToast } = useToast()
 
   useEffect(()=>{
     async function checkAdmin() {
@@ -36,7 +39,7 @@ export default function Admin(){
         .single()
 
       if (profile?.role !== 'admin') {
-        alert('Unauthorized access')
+        showError('Unauthorized access')
         router.push('/dashboard')
         return
       }
@@ -125,14 +128,14 @@ export default function Admin(){
 
       if (insertError) throw insertError
 
-      alert('Ticket uploaded successfully!')
+      showSuccess('Ticket uploaded successfully!')
       setMatchDescription('')
       setPayoutAmount('')
       setFile(null)
       loadData()
 
     } catch (error: any) {
-      alert('Upload failed: ' + error.message)
+      showError('Upload failed: ' + error.message)
     } finally {
       setUploading(false)
     }
@@ -145,7 +148,7 @@ export default function Admin(){
       .eq('id', userId)
 
     if (error) {
-      alert('Failed to update user')
+      showError('Failed to update user')
     } else {
       loadData()
     }
@@ -155,7 +158,9 @@ export default function Admin(){
   if(!isAdmin) return null
 
   return (
-    <div className="container">
+    <>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      <div className="container">
       <Head><title>Admin Panel - Smart-Win</title></Head>
       
       <h2>Admin Panel</h2>
@@ -360,5 +365,6 @@ export default function Admin(){
         </div>
       )}
     </div>
+    </>
   )
 }

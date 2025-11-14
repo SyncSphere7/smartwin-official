@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useToast } from '../hooks/useToast'
+import ToastContainer from '../components/ToastContainer'
 
 export default function Login() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
@@ -12,19 +14,20 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [checkEmail, setCheckEmail] = useState(false)
   const router = useRouter()
+  const { toasts, showError, removeToast } = useToast()
 
   async function handleLogin(e: any) {
     e.preventDefault()
     setLoading(true)
-    
+
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    
+
     if (error) {
-      alert(error.message)
+      showError(error.message)
       setLoading(false)
       return
     }
-    
+
     router.push('/dashboard')
   }
 
@@ -45,7 +48,7 @@ export default function Login() {
     })
 
     if (error) {
-      alert(error.message)
+      showError(error.message)
       setLoading(false)
       return
     }
@@ -66,11 +69,13 @@ export default function Login() {
   }
 
   return (
-    <div className="container">
-      <Head>
-        <title>{mode === 'login' ? 'Login' : 'Sign Up'} - Smart-Win Consultancy</title>
-        <meta name="description" content="Sign in or create an account to access Smart-Win match consultancy services." />
-      </Head>
+    <>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      <div className="container">
+        <Head>
+          <title>{mode === 'login' ? 'Login' : 'Sign Up'} - Smart-Win Consultancy</title>
+          <meta name="description" content="Sign in or create an account to access Smart-Win match consultancy services." />
+        </Head>
 
       <div style={{ maxWidth: 420, margin: '60px auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -198,6 +203,6 @@ export default function Login() {
           </Link>
         </div>
       </div>
-    </div>
+    </>
   )
 }
