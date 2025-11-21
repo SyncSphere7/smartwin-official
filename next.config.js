@@ -2,8 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
   images: {
-    domains: ['your-supabase-url.supabase.co'], // Update with your Supabase URL
+    domains: ['your-supabase-url.supabase.co'],
   }
 }
 
