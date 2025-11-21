@@ -1,11 +1,9 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import Logo from '../components/Logo'
 
 export default function Home() {
-  const { t } = useTranslation()
   const [activeMembers, setActiveMembers] = useState(0)
   const [totalPayouts, setTotalPayouts] = useState(0)
   const [successRate, setSuccessRate] = useState(0)
@@ -40,7 +38,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>{t('siteTitle')} - Professional Match Consultancy</title>
+        <title>Smart-Win - Professional Match Consultancy</title>
         <meta name="description" content="Professional match consultancy with verified winning proofs. $100 consultation fee to access expert team and negotiate fixed match details." />
         <link rel="icon" href="/Smart_win_logo-transparent.png" />
       </Head>
@@ -49,11 +47,11 @@ export default function Home() {
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
           <div className="logo-wrap">
             <Logo />
-            <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>{t('siteTitle')}</h2>
+            <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Smart-Win</h2>
           </div>
           <nav>
             <Link href="/login">
-              <button className="ghost-cta">{t('login')}</button>
+              <button className="ghost-cta">Login</button>
             </Link>
           </nav>
         </div>
